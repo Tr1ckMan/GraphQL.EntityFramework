@@ -26,7 +26,7 @@ partial class EfGraphQLService<TDbContext>
             Name = name,
             Description = description,
             Type = MakeListGraphType<TReturn>(itemGraphType, isNullable),
-            Arguments = ArgumentAppender.GetQueryArguments(arguments, hasId, true),
+            Arguments = ArgumentAppender.GetQueryFieldArguments(arguments, hasId),
         };
 
         IncludeAppender.SetIncludeMetadata(field, name, includeNames);

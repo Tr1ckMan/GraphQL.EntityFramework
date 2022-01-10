@@ -73,7 +73,7 @@ partial class EfGraphQLService<TDbContext>
             Type = graphType,
             Description = description,
 
-            Arguments = ArgumentAppender.GetQueryArguments(arguments, hasId, false),
+            Arguments = ArgumentAppender.GetSingleFieldArguments(arguments, hasId),
 
             Resolver = new AsyncFieldResolver<TSource, TReturn?>(
                 async context =>
