@@ -3,7 +3,7 @@ using GraphQL.Types;
 
 static class ArgumentAppender
 {
-    static QueryArgument<ListGraphType<NonNullGraphType<WhereExpressionGraph>>> whereArgument()
+    internal static QueryArgument<ListGraphType<NonNullGraphType<WhereExpressionGraph>>> whereArgument()
     {
         return new()
         {
@@ -11,7 +11,7 @@ static class ArgumentAppender
         };
     }
 
-    static QueryArgument<ListGraphType<NonNullGraphType<OrderByGraph>>> orderByArgument()
+    internal static QueryArgument<ListGraphType<NonNullGraphType<OrderByGraph>>> orderByArgument()
     {
         return new()
         {
@@ -19,7 +19,7 @@ static class ArgumentAppender
         };
     }
 
-    static QueryArgument<ListGraphType<NonNullGraphType<IdGraphType>>> idsArgument()
+    internal static QueryArgument<ListGraphType<NonNullGraphType<IdGraphType>>> idsArgument()
     {
         return new()
         {
@@ -27,7 +27,7 @@ static class ArgumentAppender
         };
     }
 
-    static QueryArgument<IdGraphType> idArgument()
+    internal static QueryArgument<IdGraphType> idArgument()
     {
         return new()
         {
@@ -35,7 +35,7 @@ static class ArgumentAppender
         };
     }
 
-    static QueryArgument<IntGraphType> skipArgument()
+    internal static QueryArgument<IntGraphType> skipArgument()
     {
         return new()
         {
@@ -43,7 +43,7 @@ static class ArgumentAppender
         };
     }
 
-    static QueryArgument<IntGraphType> takeArgument()
+    internal static QueryArgument<IntGraphType> takeArgument()
     {
         return new()
         {
@@ -54,17 +54,17 @@ static class ArgumentAppender
     public static void AddWhereArgument(this FieldType field, bool hasId, IEnumerable<QueryArgument>? extra)
     {
         var arguments = field.Arguments!;
-        arguments.Add(whereArgument());
-        arguments.Add(orderByArgument());
+        arguments.AddIfNotExist(whereArgument());
+        arguments.AddIfNotExist(orderByArgument());
         if (hasId)
         {
-            arguments.Add(idsArgument());
+            arguments.AddIfNotExist(idsArgument());
         }
         if (extra is not null)
         {
             foreach (var argument in extra)
             {
-                arguments.Add(argument);
+                arguments.AddIfNotExist(argument);
             }
         }
     }
@@ -90,10 +90,65 @@ static class ArgumentAppender
         {
             foreach (var argument in extra)
             {
-                arguments.Add(argument);
+                arguments.AddIfNotExist(argument);
             }
         }
 
         return arguments;
+    }
+
+    public static QueryArguments GetQueryFieldArguments(IEnumerable<QueryArgument>? extra, bool hasId)
+    {
+        var arguments = new QueryArguments();
+        if (extra is null)
+        {
+            AddDefaultArguments(hasId, false, arguments);
+        }
+        else
+        {
+            foreach (var argument in extra)
+            {
+                arguments.AddIfNotExist(argument);
+            }
+        }
+
+        return arguments;
+    }
+
+    public static QueryArguments GetSingleFieldArguments(IEnumerable<QueryArgument>? extra, bool hasId)
+    {
+        var arguments = new QueryArguments();
+        if (extra is null)
+        {
+            AddDefaultArguments(hasId, true, arguments);
+        }
+        else
+        {
+            foreach (var argument in extra)
+            {
+                arguments.AddIfNotExist(argument);
+            }
+        }
+
+        return arguments;
+    }
+
+    private static void AddDefaultArguments(bool hasId, bool isSingleField, QueryArguments arguments)
+    {
+        if (hasId)
+        {
+            arguments.AddIfNotExist(idArgument());
+            if (!isSingleField)
+                arguments.AddIfNotExist(idsArgument());
+        }
+
+        arguments.AddIfNotExist(whereArgument());
+
+        if (!isSingleField)
+        {
+            arguments.AddIfNotExist(orderByArgument());
+            arguments.AddIfNotExist(skipArgument());
+            arguments.AddIfNotExist(takeArgument());
+        }
     }
 }
