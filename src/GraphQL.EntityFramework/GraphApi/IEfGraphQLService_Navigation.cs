@@ -21,6 +21,7 @@ public partial interface IEfGraphQLService<TDbContext>
         Type? itemGraphType = null,
         IEnumerable<QueryArgument>? arguments = null,
         IEnumerable<string>? includeNames = null,
-        string? description = null)
+        string? description = null,
+        bool isNullable = false)
         where TReturn : class;
 }

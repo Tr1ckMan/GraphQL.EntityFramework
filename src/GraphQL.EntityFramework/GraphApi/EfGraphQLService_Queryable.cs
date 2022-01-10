@@ -82,12 +82,14 @@ partial class EfGraphQLService<TDbContext>
     static Type listGraphType = typeof(ListGraphType<>);
     static Type nonNullType = typeof(NonNullGraphType<>);
 
-    static Type MakeListGraphType<TReturn>(Type? itemGraphType)
+    static Type MakeListGraphType<TReturn>(Type? itemGraphType, bool isNullable = false)
         where TReturn : class
     {
         itemGraphType ??= GraphTypeFinder.FindGraphType<TReturn>();
 
-        return nonNullType.MakeGenericType(listGraphType.MakeGenericType(itemGraphType));
+        var listType = listGraphType.MakeGenericType(itemGraphType);
+
+        return isNullable ? listType : nonNullType.MakeGenericType(listType);
     }
 
     List<string>? GetKeyNames<TSource>()

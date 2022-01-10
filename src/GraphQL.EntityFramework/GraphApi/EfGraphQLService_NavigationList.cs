@@ -14,7 +14,8 @@ partial class EfGraphQLService<TDbContext>
         Type? itemGraphType = null,
         IEnumerable<QueryArgument>? arguments = null,
         IEnumerable<string>? includeNames = null,
-        string? description = null)
+        string? description = null,
+        bool isNullable = false)
         where TReturn : class
     {
         Guard.AgainstWhiteSpace(nameof(name), name);
@@ -24,7 +25,7 @@ partial class EfGraphQLService<TDbContext>
         {
             Name = name,
             Description = description,
-            Type = MakeListGraphType<TReturn>(itemGraphType),
+            Type = MakeListGraphType<TReturn>(itemGraphType, isNullable),
             Arguments = ArgumentAppender.GetQueryArguments(arguments, hasId, true),
         };
 
