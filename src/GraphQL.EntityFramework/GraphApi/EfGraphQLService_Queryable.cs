@@ -49,7 +49,7 @@ partial class EfGraphQLService<TDbContext>
             Name = name,
             Description = description,
             Type = MakeListGraphType<TReturn>(itemGraphType),
-            Arguments = ArgumentAppender.GetQueryArguments(arguments, hasId, true),
+            Arguments = ArgumentAppender.GetQueryFieldArguments(arguments, hasId),
         };
 
         if (resolve is not null)
