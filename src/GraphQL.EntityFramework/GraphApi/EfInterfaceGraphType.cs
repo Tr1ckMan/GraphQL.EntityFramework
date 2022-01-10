@@ -41,10 +41,11 @@ public class EfInterfaceGraphType<TDbContext, TSource> :
         Type? graphType = null,
         IEnumerable<QueryArgument>? arguments = null,
         IEnumerable<string>? includeNames = null,
-        string? description = null)
+        string? description = null,
+        bool isNullable = false)
         where TReturn : class
     {
-        return GraphQlService.AddNavigationListField<TSource, TReturn>(this, name, null, graphType, arguments, includeNames, description);
+        return GraphQlService.AddNavigationListField<TSource, TReturn>(this, name, null, graphType, arguments, includeNames, description, isNullable);
     }
 
     public void AddQueryConnectionField<TReturn>(
